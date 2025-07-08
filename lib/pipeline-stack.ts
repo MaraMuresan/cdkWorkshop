@@ -38,5 +38,31 @@ export class WorkshopPipelineStack extends Stack {
 
         const deploy = new WorkshopPipelineStage(this, "Deploy");
         const deployStage = pipeline.addStage(deploy);
+
+        // addPost = add post-deployment steps that run
+        // after the application is deployed
+        deployStage.addPost(
+            new CodeBuildStep('TestViewerEndpoint', {
+                projectName: 'TestViewerEndpoint',
+                envFromCfnOutputs: {
+                    ENPOINT_URL: deploy.hcViewUrl,
+                },
+                commands: [
+                    'curl -Ssf $ENDPOINT_URL'
+                ]
+            }),
+
+            new CodeBuildStep('TestAPIGatewayEndpoint', {
+                projectName: 'TestAPIGatewayEndpoint',
+                envFromCfnOutputs: {
+                    ENDPOINT_URL: deploy.hcEndpoint,
+                },
+                commands: [
+                    'curl -Ssf $ENDPOINT_URL',
+                    'curl -Ssf $ENDPOINT_URL/hello',
+                    'curl -Ssf $ENDPOINT_URL/test'
+                ]
+            })
+        )
     }
 }
