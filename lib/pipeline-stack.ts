@@ -19,6 +19,8 @@ export class WorkshopPipelineStack extends Stack {
         // 1. Source: Pipeline pulled code from GitHub repo
         // 2. Build: Pipeline ran the synth commands: npm ci, npm run build, npx cdk synth
         // 3. UpdatePipeline: Pipeline updated itself
+        // 4. Assets: Uploads the code files "Here's the code, AWS"
+        // 5. Deploy: Creates the application
         // Eveytime I git push to the GitHub repo, the pipeline will automatically trigger
         const pipeline = new CodePipeline(this, "Pipeline", {
             pipelineName: "WorkshopPipeline",
